@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import warnings
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
 import pandas as pd
 import pvlib
 
@@ -12,8 +15,21 @@ def make_yearly_time_index(
     timestep_minutes: int = 15,
 ) -> pd.DatetimeIndex:
     """Build a timezone-aware time index covering a full year."""
-    start = pd.Timestamp(year=year, month=1, day=1, tz=timezone)
-    end = pd.Timestamp(year=year + 1, month=1, day=1, tz=timezone)
+    try:
+        tzinfo = ZoneInfo(timezone)
+    except ZoneInfoNotFoundError:
+        warnings.warn(
+            (
+                f"Timezone '{timezone}' not found on this system. "
+                "Falling back to UTC so the application can continue."
+            ),
+            RuntimeWarning,
+            stacklevel=2,
+        )
+        tzinfo = ZoneInfo("UTC")
+
+    start = pd.Timestamp(year=year, month=1, day=1, tz=tzinfo)
+    end = pd.Timestamp(year=year + 1, month=1, day=1, tz=tzinfo)
     return pd.date_range(
         start=start,
         end=end,
