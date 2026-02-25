@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 import json
+import sys
+import tempfile
+import traceback
+from datetime import datetime, timezone
 from pathlib import Path
 
 import imageio.v3 as iio
@@ -380,6 +384,18 @@ class MainWindow(QMainWindow):
 
 def run() -> None:
     """Start the Qt application."""
+    log_path = Path(tempfile.gettempdir()) / "shadow_orography_startup.log"
+
+    def log_exception(exc_type, exc_value, exc_tb) -> None:
+        with log_path.open("a", encoding="utf-8") as handle:
+            handle.write(f"\n[{datetime.now(timezone.utc).isoformat()}] Unhandled exception\n")
+            traceback.print_exception(exc_type, exc_value, exc_tb, file=handle)
+
+    sys.excepthook = log_exception
+
+    with log_path.open("a", encoding="utf-8") as handle:
+        handle.write(f"\n[{datetime.now(timezone.utc).isoformat()}] App startup\n")
+
     app = QApplication([])
     window = MainWindow()
     window.show()
