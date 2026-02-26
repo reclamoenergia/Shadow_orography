@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib
 import os
 import sys
 import tempfile
@@ -44,8 +43,9 @@ def _log_exception(exc: BaseException, context: str) -> None:
 
 def _load_gui_run_callable():
     """Import GUI lazily to ensure startup exceptions are always logged."""
-    module = importlib.import_module("shadow_orography.gui.app")
-    return module.run
+    from shadow_orography.gui.app import run as gui_run
+
+    return gui_run
 
 
 def run() -> None:
