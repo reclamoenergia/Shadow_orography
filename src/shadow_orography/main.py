@@ -12,11 +12,23 @@ from pathlib import Path
 __all__ = ["run"]
 
 
+def _is_frozen_app() -> bool:
+    """Return True when running from a frozen executable bundle."""
+    return bool(getattr(sys, "frozen", False))
+
+
 def _friendly_missing_dependency_error(exc: ModuleNotFoundError) -> RuntimeError | None:
     """Return a user-facing startup error for known missing runtime dependencies."""
     missing_module = exc.name or ""
-    if missing_module != "pandas":
+    if not missing_module.startswith("pandas"):
         return None
+
+    if not _is_frozen_app():
+        return RuntimeError(
+            "Dipendenza Python mancante: pandas. "
+            "Installa le dipendenze del progetto (es. `pip install -e .`) "
+            "oppure esegui `pip install pandas` nell'ambiente corrente."
+        )
 
     return RuntimeError(
         "Dipendenza mancante nel build dell'eseguibile: pandas. "
