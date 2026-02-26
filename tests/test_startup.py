@@ -63,7 +63,9 @@ def test_run_reports_missing_pandas_with_friendly_message(
 
     content = log_path.read_text(encoding="utf-8")
     assert "pandas" in content
-    assert "hidden-import pandas" in content
+    assert "shadow_orography.spec" in content
+    assert "python -m PyInstaller shadow_orography.spec" in content
+    assert "collect-all pandas" in content
 
 
 def test_run_reports_missing_pandas_in_dev_environment(
