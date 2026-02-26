@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import json
+import importlib
+import importlib.util
 import sys
 import tempfile
 import traceback
 from datetime import datetime
 from pathlib import Path
 
-import imageio.v3 as iio
 import numpy as np
 import pandas as pd
 from PySide6.QtCore import Qt, QTimer
@@ -322,6 +323,14 @@ class MainWindow(QMainWindow):
         if self.current_day_df.empty:
             QMessageBox.information(self, "No animation", "Compute and pick a day first")
             return
+        if importlib.util.find_spec("imageio") is None:
+            QMessageBox.critical(
+                self,
+                "Missing dependency",
+                "The optional dependency 'imageio' is not available. "
+                "Install it and rebuild the executable to enable WebM export.",
+            )
+            return
         path, _ = QFileDialog.getSaveFileName(
             self,
             "Export WebM",
@@ -343,6 +352,7 @@ class MainWindow(QMainWindow):
             arr = np.array(ptr).reshape(image.height(), image.width(), 4)
             frames.append(arr[:, :, :3].copy())
 
+        iio = importlib.import_module("imageio.v3")
         iio.imwrite(path, np.stack(frames), fps=10)
 
     def save_project(self) -> None:
