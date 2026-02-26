@@ -53,3 +53,6 @@ L'eseguibile verrà generato in `dist/ShadowOrography.exe`.
 
 
 Nota: se l'errore persiste, quasi sempre PyInstaller è stato lanciato da un interprete diverso da quello dove hai installato `pandas`.
+   - `pyinstaller shadow_orography.spec`
+
+Lo spec include i sottomoduli `pandas` necessari al runtime del bundle.
