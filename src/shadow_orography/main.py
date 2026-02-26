@@ -12,6 +12,19 @@ from pathlib import Path
 __all__ = ["run"]
 
 
+def _friendly_missing_dependency_error(exc: ModuleNotFoundError) -> RuntimeError | None:
+    """Return a user-facing startup error for known missing runtime dependencies."""
+    missing_module = exc.name or ""
+    if missing_module != "pandas":
+        return None
+
+    return RuntimeError(
+        "Dipendenza mancante nel build dell'eseguibile: pandas. "
+        "Ricrea il file .exe includendo pandas (es. --hidden-import pandas) "
+        "oppure reinstalla l'app completa."
+    )
+
+
 def _startup_log_path() -> Path:
     """Return the startup log location, overridable for tests/debugging."""
     custom_path = os.getenv("SHADOW_OROGRAPHY_STARTUP_LOG")
@@ -54,6 +67,14 @@ def run() -> None:
     try:
         gui_run = _load_gui_run_callable()
         gui_run()
+    except ModuleNotFoundError as exc:
+        friendly_exc = _friendly_missing_dependency_error(exc)
+        if friendly_exc is None:
+            _log_exception(exc, "Fatal startup error")
+            raise
+
+        _log_exception(friendly_exc, "Fatal startup error")
+        raise friendly_exc from exc
     except BaseException as exc:
         _log_exception(exc, "Fatal startup error")
         raise
