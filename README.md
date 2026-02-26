@@ -10,3 +10,7 @@ If `ShadowOrography.exe` closes immediately (even from console), check the start
 - Example full path: `C:\\Users\\<user>\\AppData\\Local\\Temp\\shadow_orography_startup.log`
 
 The file records unhandled exceptions during app bootstrap so you can identify missing dependencies/plugins.
+
+## Nota funzionale (IT)
+
+Per una spiegazione dell'interfaccia e dell'algoritmo di calcolo, vedi `NOTA_INTERFACCIA_ALGORITMO.md`.
