@@ -39,6 +39,20 @@ Per evitare errori come `ModuleNotFoundError: No module named 'pandas'`, usa lo 
 2. Verifica che pandas sia disponibile nell'ambiente usato per il build:
    - `python -c "import pandas; print(pandas.__version__)"`
 3. Crea l'eseguibile con PyInstaller usando lo spec dedicato:
+   - `python -m PyInstaller --clean --noconfirm shadow_orography.spec`
+
+Lo spec usa `collect_all("pandas")` (imports + data + binaries) per ridurre i casi in cui il bundle non trova `pandas` a runtime.
+
+### Comando rapido (.exe)
+
+Da root progetto, nell'ambiente virtuale con dipendenze installate:
+
+- `python -m PyInstaller --clean --noconfirm shadow_orography.spec`
+
+L'eseguibile verrà generato in `dist/ShadowOrography.exe`.
+
+
+Nota: se l'errore persiste, quasi sempre PyInstaller è stato lanciato da un interprete diverso da quello dove hai installato `pandas`.
    - `pyinstaller shadow_orography.spec`
 
 Lo spec include i sottomoduli `pandas` necessari al runtime del bundle.

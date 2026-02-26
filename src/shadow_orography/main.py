@@ -32,8 +32,11 @@ def _friendly_missing_dependency_error(exc: ModuleNotFoundError) -> RuntimeError
 
     return RuntimeError(
         "Dipendenza mancante nel build dell'eseguibile: pandas. "
-        "Ricrea il file .exe includendo pandas (usa `pyinstaller shadow_orography.spec` "
-        "oppure `--collect-submodules pandas`) oppure reinstalla l'app completa."
+
+        "Ricrea il file .exe dallo stesso ambiente Python dell'app "
+        "(usa `python -m PyInstaller shadow_orography.spec`) oppure usa "
+        "`--collect-all pandas`; quindi reinstalla l'app completa se necessario."
+
     )
 
 

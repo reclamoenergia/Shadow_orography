@@ -1,21 +1,23 @@
 # -*- mode: python ; coding: utf-8 -*-
 """PyInstaller spec for Shadow Orography Studio on Windows.
 
-Build with:
-    pyinstaller shadow_orography.spec
+Build with (same interpreter/venv that has project deps installed):
+    python -m PyInstaller --clean --noconfirm shadow_orography.spec
 """
 
-from PyInstaller.utils.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_all
 
-hiddenimports = collect_submodules("pandas")
+# collect_all is more robust than only collect_submodules: it includes
+# hidden imports + package data + binaries needed by pandas at runtime.
+pandas_datas, pandas_binaries, pandas_hiddenimports = collect_all("pandas")
 
 
 a = Analysis(
     ["src/shadow_orography/main.py"],
-    pathex=[],
-    binaries=[],
-    datas=[],
-    hiddenimports=hiddenimports,
+    pathex=["src"],
+    binaries=pandas_binaries,
+    datas=pandas_datas,
+    hiddenimports=pandas_hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
