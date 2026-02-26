@@ -51,6 +51,7 @@ def test_run_reports_missing_pandas_with_friendly_message(
 ) -> None:
     log_path = tmp_path / "startup.log"
     monkeypatch.setenv("SHADOW_OROGRAPHY_STARTUP_LOG", str(log_path))
+    monkeypatch.setattr(main.sys, "frozen", True, raising=False)
 
     def fake_loader():
         raise ModuleNotFoundError("No module named 'pandas'", name="pandas")
@@ -63,3 +64,23 @@ def test_run_reports_missing_pandas_with_friendly_message(
     content = log_path.read_text(encoding="utf-8")
     assert "pandas" in content
     assert "hidden-import pandas" in content
+
+
+def test_run_reports_missing_pandas_in_dev_environment(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    log_path = tmp_path / "startup.log"
+    monkeypatch.setenv("SHADOW_OROGRAPHY_STARTUP_LOG", str(log_path))
+    monkeypatch.delattr(main.sys, "frozen", raising=False)
+
+    def fake_loader():
+        raise ModuleNotFoundError("No module named 'pandas.core'", name="pandas.core")
+
+    monkeypatch.setattr(main, "_load_gui_run_callable", fake_loader)
+
+    with pytest.raises(RuntimeError, match="Installa le dipendenze del progetto"):
+        main.run()
+
+    content = log_path.read_text(encoding="utf-8")
+    assert "Dipendenza Python mancante" in content
