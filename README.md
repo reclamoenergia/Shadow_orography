@@ -28,3 +28,17 @@ You can override the startup log path (useful in CI or support scripts):
 - then launch `ShadowOrography.exe`
 
 The log records bootstrap failures early, including import/plugin errors before the UI appears.
+
+
+## Build consigliato dell'eseguibile (Windows)
+
+Per evitare errori come `ModuleNotFoundError: No module named 'pandas'`, usa lo spec già pronto nel repository:
+
+1. Installa dipendenze progetto e tool di build:
+   - `pip install -e .[dev]`
+2. Verifica che pandas sia disponibile nell'ambiente usato per il build:
+   - `python -c "import pandas; print(pandas.__version__)"`
+3. Crea l'eseguibile con PyInstaller usando lo spec dedicato:
+   - `pyinstaller shadow_orography.spec`
+
+Lo spec include i sottomoduli `pandas` necessari al runtime del bundle.
