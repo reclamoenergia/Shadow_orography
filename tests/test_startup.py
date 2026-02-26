@@ -43,3 +43,23 @@ def test_run_logs_and_reraises_startup_failure(
     content = log_path.read_text(encoding="utf-8")
     assert "Fatal startup error" in content
     assert "RuntimeError: boom" in content
+
+
+def test_run_reports_missing_pandas_with_friendly_message(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    log_path = tmp_path / "startup.log"
+    monkeypatch.setenv("SHADOW_OROGRAPHY_STARTUP_LOG", str(log_path))
+
+    def fake_loader():
+        raise ModuleNotFoundError("No module named 'pandas'", name="pandas")
+
+    monkeypatch.setattr(main, "_load_gui_run_callable", fake_loader)
+
+    with pytest.raises(RuntimeError, match="Dipendenza mancante"):
+        main.run()
+
+    content = log_path.read_text(encoding="utf-8")
+    assert "pandas" in content
+    assert "hidden-import pandas" in content
