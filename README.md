@@ -13,6 +13,11 @@ If `ShadowOrography.exe` closes immediately (also when launched from `cmd`/Power
    - Example: `C:\Users\<user>\AppData\Local\Temp\shadow_orography_startup.log`
 3. Look for `Fatal startup error` and the Python traceback.
 
+The file records unhandled exceptions during app bootstrap so you can identify missing dependencies/plugins.
+
+## Nota funzionale (IT)
+
+Per una spiegazione dell'interfaccia e dell'algoritmo di calcolo, vedi `NOTA_INTERFACCIA_ALGORITMO.md`.
 ### Typical causes and fixes
 
 - **Missing Visual C++ runtime**: install/repair "Microsoft Visual C++ Redistributable 2015-2022" (x64).
