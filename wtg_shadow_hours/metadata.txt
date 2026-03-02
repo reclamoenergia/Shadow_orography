@@ -1,0 +1,10 @@
+[general]
+name=WTG Shadow Hours
+qgisMinimumVersion=3.28
+description=Compute annual worst-case wind turbine shadow hours on a flat terrain.
+version=0.1.0
+author=Your Name
+email=your.email@example.com
+about=Processing plugin that computes annual cumulative shadow hours from multiple turbines using a timestep-based worst-case rotor projection model.
+category=Analysis
+hasProcessingProvider=yes
